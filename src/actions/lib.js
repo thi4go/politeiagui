@@ -21,7 +21,7 @@ export const callAfterMinimumWait = (callback, waitTimeMs) => {
       args = arguments;
       return;
     }
-
+    console.log("executing");
     callback.apply(this, arguments);
   };
 

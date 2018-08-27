@@ -1,5 +1,7 @@
 import * as lib from "../lib";
+
 describe("test action/lib.js", () => {
+
   test("test basic action", () => {
     const type = "any";
     const payload = "any_payload";
@@ -16,7 +18,7 @@ describe("test action/lib.js", () => {
     });
   });
 
-  test("reduce types", () => {
+  test("test reduce types", () => {
     const types = {
       TYPE_1: "TYPE_1",
       TYPE_2: "TYPE_2"
@@ -28,5 +30,21 @@ describe("test action/lib.js", () => {
     expect(reducedTypes.TYPE_2(null, "error")).toEqual(
       lib.basicAction(types.TYPE_2)(null, "error")
     );
+  });
+
+  test("test call after wait", () => {
+    const ms = 0;
+    const cb = resp => {
+      console.log("running cb");
+      return resp;
+    };
+
+    const value = lib.callAfterMinimumWait(cb, ms, 3);
+
+    console.log(value());
+
+
+
+
   });
 });

@@ -62,7 +62,7 @@ export const verifyUserPayment = (address, amount, txNotBefore) => dispatch => {
     });
 };
 
-const checkForPayment = (handler, transactions, addressToMatch, amount, txNotBefore) => {
+export const checkForPayment = (handler, transactions, addressToMatch, amount, txNotBefore) => {
   for(const transaction of transactions) {
     const txn = handler(transaction, addressToMatch, amount, txNotBefore);
     if(txn) {
@@ -71,7 +71,7 @@ const checkForPayment = (handler, transactions, addressToMatch, amount, txNotBef
   }
 };
 
-const checkDcrdataHandler = (transaction, addressToMatch, amount, txNotBefore) => {
+export const checkDcrdataHandler = (transaction, addressToMatch, amount, txNotBefore) => {
   if (!transaction.vout) {
     return null;
   }
@@ -98,7 +98,7 @@ const checkDcrdataHandler = (transaction, addressToMatch, amount, txNotBefore) =
   return null;
 };
 
-const checkInsightHandler = (transaction, addressToMatch, amount, txNotBefore) => {
+export const checkInsightHandler = (transaction, addressToMatch, amount, txNotBefore) => {
   if (transaction.amount >= amount && transaction.ts >= txNotBefore) {
     return {
       id: transaction.txid,

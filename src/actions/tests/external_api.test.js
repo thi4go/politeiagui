@@ -105,5 +105,48 @@ describe("test actions/external_api", () => {
       });
   });
 
+  test("test insight handler", () => {
+    const transaction = {
+      txid: FAKE_ADDRESS,
+      ts: FAKE_TX_NOT_BEFORE,
+      amount: 2,
+      confirmations: 0
+    };
+
+    const obj = ea.checkInsightHandler(transaction, null, 2, FAKE_TX_NOT_BEFORE);
+
+    expect(obj).toEqual({
+      id: transaction.txid,
+      confirmations: transaction.confirmations
+    });
+
+  });
+
+  test("test decred data handler", () => {
+    // const transaction = {
+    //   time: "15272637992",
+    //   vout: 1,
+    //   txid: FAKE_ADDRESS,
+    //   ts: FAKE_TX_NOT_BEFORE,
+    //   amount: 2,
+    //   confirmations: 0,
+    //   vout: [
+    //     { scriptPubKey: { addresses: [FAKE_ADDRESS] }, value: 2 }
+    //   ]
+    // };
+
+    // let obj = ea.checkDcrdataHandler(transaction, FAKE_ADDRESS, 2, FAKE_TX_NOT_BEFORE);
+
+    // expect(obj).toEqual({
+    //   id: transaction.txid,
+    //   confirmations: transaction.confirmations
+    // });
+
+    // delete transaction.vout;
+
+    // obj = ea.checkDcrdataHandler(transaction, FAKE_ADDRESS, 2, FAKE_TX_NOT_BEFORE);
+
+    // expect(obj).toEqual(null);
+  });
 
 });
