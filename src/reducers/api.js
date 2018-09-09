@@ -1,7 +1,6 @@
 import * as act from "../actions/types";
 import get from "lodash/fp/get";
 import map from "lodash/fp/map";
-import cloneDeep from "lodash/cloneDeep";
 import { DEFAULT_REQUEST_STATE, request, receive, reset, resetMultiple } from "./util";
 import { PROPOSAL_VOTING_ACTIVE } from "../constants";
 import { clearStateLocalStorage } from "../lib/local_storage";
@@ -125,61 +124,25 @@ export const onResetSyncLikeComment = (state) => {
 };
 
 export const onReceiveSyncLikeComment = (state, action) => {
-  const { token, action: cAction, commentid } = action.payload;
-  const newAction = parseInt(cAction, 10);
-
-  const commentsvotes = state.commentsvotes.response &&
-    state.commentsvotes.response.commentsvotes;
-  const backupCV = cloneDeep(commentsvotes);
-  const comments = state.proposalComments.response &&
-    state.proposalComments.response.comments;
-
-  let reducedVotes = null;
-  const cvfound = commentsvotes && commentsvotes.find(
-    cv => cv.commentid === commentid && cv.token === token
-  );
-
-  if (cvfound) {
-    reducedVotes = commentsvotes.reduce(
-      (acc, cv) => {
-        if (cv.commentid === commentid && cv.token === token) {
-          const currentAction = parseInt(cv.action, 10);
-          acc.oldAction = currentAction;
-          cv = {
-            ...cv,
-            action: newAction === currentAction ? 0 : newAction
-          };
-        }
-        return { ...acc, cvs: acc.cvs.concat([cv]) };
-      }, { cvs: [], oldAction: null });
-  } else {
-    const newCommentVote = { token, commentid, action: newAction };
-    reducedVotes = {
-      cvs: commentsvotes ? commentsvotes.concat([newCommentVote]) : [newCommentVote],
-      oldAction: 0
-    };
-  }
-
-  const { cvs: newCommentsVotes, oldAction } = reducedVotes;
-
+  console.log(action);
   return {
     ...state,
     commentsvotes: {
       ...state.commentsvotes,
-      backup: backupCV,
+      backup: action.backupCV,
       response: {
-        commentsvotes: newCommentsVotes
+        commentsvotes: action.newCommentsVotes
       }
     },
     proposalComments: {
       ...state.proposalComments,
-      backup: comments,
+      backup: action.comments,
       response: {
         ...state.proposalComments.response,
-        comments: state.proposalComments.response.comments.map(el => el.commentid === commentid ? {
+        comments: state.proposalComments.response.comments.map(el => el.commentid === action.commentid ? {
           ...el,
-          totalvotes: el.totalvotes + (oldAction === newAction ? -1 : oldAction === 0 ? 1 : 0),
-          resultvotes: el.resultvotes + (oldAction === newAction ? (-oldAction) : newAction - oldAction)
+          totalvotes: el.totalvotes + (action.oldAction === action.newAction ? -1 : action.oldAction === 0 ? 1 : 0),
+          resultvotes: el.resultvotes + (action.oldAction === action.newAction ? (-action.oldAction) : action.newAction - action.oldAction)
         } : el)
       }
     }

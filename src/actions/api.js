@@ -8,6 +8,7 @@ import * as external_api_actions from "./external_api";
 import { clearStateLocalStorage } from "../lib/local_storage";
 import { callAfterMinimumWait } from "./lib";
 import act from "./methods";
+import cloneDeep from "lodash/cloneDeep";
 import {
   globalUsernamesById,
   selectDefaultPublicFilterValue,
@@ -325,13 +326,53 @@ export const onSubmitEditedProposal = (
   });
 
 export const onLikeComment = (loggedInAsEmail, token, commentid, action) =>
-  withCsrf((dispatch, getState, csrf) => {
+  withCsrf((dispatch, getState, csrf, token, commentid) => {
+    const state = getState();
     if (!loggedInAsEmail) {
       dispatch(openModal("LOGIN", {}, null));
       return;
     }
+
+    const newAction = parseInt(action, 10);
+
+    const commentsvotes = state.commentsvotes.response &&
+      state.commentsvotes.response.commentsvotes;
+    const backupCV = cloneDeep(commentsvotes);
+    const comments = state.proposalComments.response &&
+      state.proposalComments.response.comments;
+
+    let reducedVotes = null;
+    const cvfound = commentsvotes && commentsvotes.find(
+      cv => cv.commentid === commentid && cv.token === token
+    );
+
+    if (cvfound) {
+      reducedVotes = commentsvotes.reduce(
+        (acc, cv) => {
+          if (cv.commentid === commentid && cv.token === token) {
+            const currentAction = parseInt(cv.action, 10);
+            acc.oldAction = currentAction;
+            cv = {
+              ...cv,
+              action: newAction === currentAction ? 0 : newAction
+            };
+          }
+          return { ...acc, cvs: acc.cvs.concat([cv]) };
+        }, { cvs: [], oldAction: null });
+    } else {
+      const newCommentVote = { token, commentid, action: newAction };
+      reducedVotes = {
+        cvs: commentsvotes ? commentsvotes.concat([newCommentVote]) : [newCommentVote],
+        oldAction: 0
+      };
+    }
+
+    const { cvs: newCommentsVotes, oldAction } = reducedVotes;
+
     dispatch(act.REQUEST_LIKE_COMMENT({ commentid, token }));
-    dispatch(act.RECEIVE_SYNC_LIKE_COMMENT({ token, commentid, action }));
+    dispatch(act.RECEIVE_SYNC_LIKE_COMMENT({
+      backupCV, comments, newCommentsVotes, oldAction, newAction, commentid
+    }));
     return Promise.resolve(api.makeLikeComment(token, action, commentid))
       .then(comment => api.signLikeComment(loggedInAsEmail, comment))
       .then(comment => api.likeComment(csrf, comment))
