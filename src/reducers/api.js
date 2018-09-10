@@ -38,17 +38,7 @@ export const DEFAULT_STATE = {
 export const onReceiveSetStatus = (state, action) => {
   state = receive("setStatusProposal", state, action);
   if (action.error) return state;
-
-  const { proposal: updatedProposal } = action.payload;
-  const viewedProposal = get([ "proposal", "response", "proposal" ], state);
-  const updateProposalStatus = proposal => {
-    if (get([ "censorshiprecord", "token" ], updatedProposal) === get([ "censorshiprecord", "token" ], proposal)) {
-      return updatedProposal;
-    } else {
-      return proposal;
-    }
-  };
-
+  const { viewedProposal, updatedProposal, updateProposalStatus } = action.payload;
   return {
     ...state,
     proposal: viewedProposal
@@ -124,25 +114,26 @@ export const onResetSyncLikeComment = (state) => {
 };
 
 export const onReceiveSyncLikeComment = (state, action) => {
-  console.log(action);
+  const { backupCV, comments, newCommentsVotes,
+    oldAction, newAction, commentid } = action.payload;
   return {
     ...state,
     commentsvotes: {
       ...state.commentsvotes,
-      backup: action.backupCV,
+      backup: backupCV,
       response: {
-        commentsvotes: action.newCommentsVotes
+        commentsvotes: newCommentsVotes
       }
     },
     proposalComments: {
       ...state.proposalComments,
-      backup: action.comments,
+      backup: comments,
       response: {
         ...state.proposalComments.response,
-        comments: state.proposalComments.response.comments.map(el => el.commentid === action.commentid ? {
+        comments: state.proposalComments.response.comments.map(el => el.commentid === commentid ? {
           ...el,
-          totalvotes: el.totalvotes + (action.oldAction === action.newAction ? -1 : action.oldAction === 0 ? 1 : 0),
-          resultvotes: el.resultvotes + (action.oldAction === action.newAction ? (-action.oldAction) : action.newAction - action.oldAction)
+          totalvotes: el.totalvotes + (oldAction === newAction ? -1 : oldAction === 0 ? 1 : 0),
+          resultvotes: el.resultvotes + (oldAction === newAction ? (-oldAction) : newAction - oldAction)
         } : el)
       }
     }

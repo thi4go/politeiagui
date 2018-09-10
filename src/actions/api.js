@@ -2,6 +2,7 @@ import Promise from "promise";
 import * as sel from "../selectors";
 import * as api from "../lib/api";
 import * as pki from "../lib/pki";
+import get from "lodash/fp/get";
 import { confirmWithModal, openModal, closeModal } from "./modal";
 import * as modalTypes from "../components/Modal/modalTypes";
 import * as external_api_actions from "./external_api";
@@ -326,48 +327,21 @@ export const onSubmitEditedProposal = (
   });
 
 export const onLikeComment = (loggedInAsEmail, token, commentid, action) =>
-  withCsrf((dispatch, getState, csrf, token, commentid) => {
-    const state = getState();
+  withCsrf((dispatch, getState, csrf) => {
     if (!loggedInAsEmail) {
       dispatch(openModal("LOGIN", {}, null));
       return;
     }
-
+    const state = getState();
     const newAction = parseInt(action, 10);
-
-    const commentsvotes = state.commentsvotes.response &&
-      state.commentsvotes.response.commentsvotes;
+    const commentsvotes = state.api.commentsvotes.response &&
+      state.api.commentsvotes.response.commentsvotes;
     const backupCV = cloneDeep(commentsvotes);
-    const comments = state.proposalComments.response &&
-      state.proposalComments.response.comments;
+    const comments = state.api.proposalComments.response &&
+      state.api.proposalComments.response.comments;
 
-    let reducedVotes = null;
-    const cvfound = commentsvotes && commentsvotes.find(
-      cv => cv.commentid === commentid && cv.token === token
-    );
-
-    if (cvfound) {
-      reducedVotes = commentsvotes.reduce(
-        (acc, cv) => {
-          if (cv.commentid === commentid && cv.token === token) {
-            const currentAction = parseInt(cv.action, 10);
-            acc.oldAction = currentAction;
-            cv = {
-              ...cv,
-              action: newAction === currentAction ? 0 : newAction
-            };
-          }
-          return { ...acc, cvs: acc.cvs.concat([cv]) };
-        }, { cvs: [], oldAction: null });
-    } else {
-      const newCommentVote = { token, commentid, action: newAction };
-      reducedVotes = {
-        cvs: commentsvotes ? commentsvotes.concat([newCommentVote]) : [newCommentVote],
-        oldAction: 0
-      };
-    }
-
-    const { cvs: newCommentsVotes, oldAction } = reducedVotes;
+    const { cvs: newCommentsVotes, oldAction }
+      = api.reduceCommentLikes(commentsvotes, commentid, token, newAction);
 
     dispatch(act.REQUEST_LIKE_COMMENT({ commentid, token }));
     dispatch(act.RECEIVE_SYNC_LIKE_COMMENT({
@@ -441,9 +415,23 @@ export const onSubmitStatusProposal = (loggedInAsEmail, token, status, censorMes
     if (status === 4) {
       dispatch(act.SET_PROPOSAL_APPROVED(true));
     }
+    console.log("action onSubmitStatusProposal");
+    console.log("action onSubmitStatusProposal");
+    const state = getState();
+    const viewedProposal = get([ "proposal", "response", "proposal" ], state);
     return api
       .proposalSetStatus(loggedInAsEmail, csrf, token, status, censorMessage)
-      .then(response => dispatch(act.RECEIVE_SETSTATUS_PROPOSAL(response)))
+      .then(response => {
+        const { proposal: updatedProposal } = response;
+        const updateProposalStatus = proposal => {
+          if (get([ "censorshiprecord", "token" ], updatedProposal) === get([ "censorshiprecord", "token" ], proposal)) {
+            return updatedProposal;
+          } else {
+            return proposal;
+          }
+        };
+        dispatch(act.RECEIVE_SETSTATUS_PROPOSAL({ viewedProposal, updatedProposal, updateProposalStatus }));
+      })
       .catch(error => {
         dispatch(act.RECEIVE_SETSTATUS_PROPOSAL(null, error));
       });
