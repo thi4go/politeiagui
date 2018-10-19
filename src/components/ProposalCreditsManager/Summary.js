@@ -58,11 +58,12 @@ const ProposalCreditsSummary = ({
         <div className="credit-purchase-table">
           <div className="credit-purchase-header">
             <div className="credit-purchase-row">
-              <div className="credit-purchase-cell credit-purchase-number">#</div>
-              <div className="credit-purchase-cell credit-purchase-price">DCR per credit</div>
+              <div className="credit-purchase-cell credit-purchase-number">Amount</div>
+              <div className="credit-purchase-cell credit-purchase-price">DCRs</div>
               <div className="credit-purchase-cell credit-purchase-tx">Transaction</div>
               <div className="credit-purchase-cell credit-purchase-status">Status</div>
               <div className="credit-purchase-cell credit-purchase-date">Date</div>
+              <div className="credit-purchase-cell credit-purchase-date">Type</div>
               <div className="clear"></div>
             </div>
           </div>
@@ -70,7 +71,9 @@ const ProposalCreditsSummary = ({
             {reverseProposalCreditPurchases.map((creditPurchase, i) => (
               <div className="credit-purchase-row" key={i}>
                 <div className="credit-purchase-cell credit-purchase-number">{creditPurchase.numberPurchased}</div>
-                <div className="credit-purchase-cell credit-purchase-price">{creditPurchase.price} DCR</div>
+                <div className="credit-purchase-cell credit-purchase-price">
+                  {creditPurchase.numberPurchased*creditPurchase.price} DCR
+                </div>
                 <div className="credit-purchase-cell credit-purchase-tx">
                   <DcrdataTxLink isTestnet={isTestnet} txId={creditPurchase.txId} />
                 </div>
@@ -88,6 +91,9 @@ const ProposalCreditsSummary = ({
                         formatDate(creditPurchase.datePurchased)
                       : ""
                   }
+                </div>
+                <div className="credit-purchase-cell credit-purchase-type">
+                  credits
                 </div>
                 <div className="clear"></div>
               </div>

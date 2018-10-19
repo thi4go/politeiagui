@@ -1295,6 +1295,11 @@ li p.header-3 {
   text-align: center;
 }
 
+.credit-purchase-type {
+  width: 90px;
+  text-align: center;
+}
+
 .credit-purchase-date-text {
   text-align: center;
 }
