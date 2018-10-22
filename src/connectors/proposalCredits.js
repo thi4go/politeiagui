@@ -19,7 +19,8 @@ export default connect(
     proposalPaywallPaymentConfirmations: sel.apiProposalPaywallPaymentConfirmations,
     pollingCreditsPayment: sel.pollingCreditsPayment,
     proposalPaymentReceived: sel.proposalPaymentReceived,
-    paywallTxid: sel.paywallTxid
+    paywallTxid: sel.paywallTxid,
+    userPaywallTxid: sel.getUserPaywallTxid
   }),
   dispatch => bindActionCreators({
     onUserProposalCredits: act.onUserProposalCredits,
