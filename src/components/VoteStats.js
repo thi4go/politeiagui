@@ -102,8 +102,8 @@ class Stats extends React.Component {
         { option.id === "yes" ?
           (
             <Tooltip
-              tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "38px" }}
-              text="YES"
+              tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "36px" }}
+              text="Yes"
               position="bottom"
             >
               <span>
@@ -113,8 +113,8 @@ class Stats extends React.Component {
           ) :
           (
             <Tooltip
-              tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "31px" }}
-              text="NO"
+              tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "29px" }}
+              text="No"
               position="bottom"
             >
               <span>
@@ -134,7 +134,8 @@ class Stats extends React.Component {
       color: op.color
     }))
 
-  getTimeInBlocks = (blocks) => {
+  getTimeInBlocks = (endHeight, currentHeight) => {
+    const blocks = endHeight - currentHeight;
     const blockTimeMinutes = NETWORK === "testnet" ? blocks*2 : blocks*5 ;
     const mili = blockTimeMinutes * 60000;
     const dateMs = new Date(mili + Date.now()); // gets time in ms
@@ -143,10 +144,16 @@ class Stats extends React.Component {
       { addSuffix: true }
     );
     const element = (
-      <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-        <span>{blocks === 0 ? "last block left" : blocks + " blocks left"}</span>
-        <span style={{ fontSize: "11px" }}>expires {distance}</span>
-      </div>
+      <Tooltip
+        tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "90px" }}
+        text={"Voting ends at block #"+endHeight}
+        position="bottom"
+      >
+        <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+          <span>{blocks === 0 ? "last block left" : blocks + " blocks left"}</span>
+          <span style={{ fontSize: "11px" }}>expires {distance}</span>
+        </div>
+      </Tooltip>
     );
     return blockTimeMinutes > 0 ? element : <span>expired</span>;
   };
@@ -172,7 +179,7 @@ class Stats extends React.Component {
           style={headerStyle}
         >
           <VoteStatusLabel status={status} />
-          {endHeight && currentHeight ? this.getTimeInBlocks(endHeight - currentHeight) : null}
+          {endHeight && currentHeight ? this.getTimeInBlocks(endHeight, currentHeight) : null}
           {showStats && <span style={{ marginLeft: "20px" }}>Votes: </span>}
           {showStats && options.map(op => this.renderStats(op))}
         </div>
