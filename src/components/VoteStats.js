@@ -3,6 +3,7 @@ import voteStatsConnector from "../connectors/voteStats";
 import StackedBarChart from "./StackedBarChart";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
 import { getRandomColor } from "../helpers";
+import Tooltip from "./Tooltip";
 import {
   PROPOSAL_VOTING_ACTIVE,
   PROPOSAL_VOTING_FINISHED,
@@ -93,13 +94,36 @@ class Stats extends React.Component {
     };
     const optionIdStyle = {
       textTransform: "uppercase",
-      fontWeight: "bold",
+      fontWeight: "semibold",
       marginRight: "4px"
     };
     return (
       <div key={`option-${option.id}`} style={optionStyle} >
-        <span style={optionIdStyle} >{`${option.id}:`}</span>
-        <span>{`${option.votesReceived} votes    `}</span>
+        { option.id === "yes" ?
+          (
+            <Tooltip
+              tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "38px" }}
+              text="YES"
+              position="bottom"
+            >
+              <span>
+                <span style={optionIdStyle} >{` ✔ ${option.votesReceived}`}</span>
+              </span>
+            </Tooltip>
+          ) :
+          (
+            <Tooltip
+              tipStyle={{ fontSize: "11px", top: "20px", left: "20px", width: "31px" }}
+              text="NO"
+              position="bottom"
+            >
+              <span>
+                <span style={optionIdStyle} >{` ✖ ${option.votesReceived}`}</span>
+              </span>
+            </Tooltip>
+          )
+        }
+
       </div>
     );
   };
@@ -118,11 +142,12 @@ class Stats extends React.Component {
       dateMs,
       { addSuffix: true }
     );
-    const element =
-    <span>
-      expires {distance}
-    </span>
-    ;
+    const element = (
+      <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+        <span>{blocks === 0 ? "last block left" : blocks + " blocks left"}</span>
+        <span style={{ fontSize: "11px" }}>expires {distance}</span>
+      </div>
+    );
     return blockTimeMinutes > 0 ? element : <span>expired</span>;
   };
   renderOptionsStats = (totalVotes, optionsResult, endHeight, currentHeight) => {
@@ -140,7 +165,7 @@ class Stats extends React.Component {
       color: "gray"
     };
 
-    const bodyStyle = { marginTop: "5px" };
+    const bodyStyle = { marginTop: "10px" };
     return (
       <div>
         <div
@@ -148,12 +173,13 @@ class Stats extends React.Component {
         >
           <VoteStatusLabel status={status} />
           {endHeight && currentHeight ? this.getTimeInBlocks(endHeight - currentHeight) : null}
+          {showStats && <span style={{ marginLeft: "20px" }}>Votes: </span>}
           {showStats && options.map(op => this.renderStats(op))}
         </div>
         {showStats ?
           <StackedBarChart
             displayValuesForLabel="yes"
-            style={{ ...bodyStyle, maxWidth: "400px" }}
+            style={{ ...bodyStyle, maxWidth: "500px" }}
             data={this.getChartData(options)}
           /> :
           !isPreVoting ?
@@ -189,7 +215,7 @@ class VoteStats extends React.Component {
       border: "1px solid #bbb",
       marginTop: "10px",
       borderRadius: "8px",
-      maxWidth: "400px"
+      width: "500px"
     };
     return(
       <div style={wrapperStyle}>
