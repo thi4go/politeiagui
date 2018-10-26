@@ -36,7 +36,7 @@ const VoteStatusLabel = ({ status }) => {
     [PROPOSAL_VOTING_FINISHED]: (
       <span style={{
         ...spanStyle,
-        color: "#bf4153"
+        color: "#091440"
       }}>
         {mapVoteStatusToMessage[status]}
       </span>
@@ -44,7 +44,7 @@ const VoteStatusLabel = ({ status }) => {
     [PROPOSAL_VOTING_NOT_AUTHORIZED]: (
       <span style={{
         ...spanStyle,
-        color: "#586D82"
+        color: "#8997a5"
       }}>
         {mapVoteStatusToMessage[status]}
       </span>
@@ -52,13 +52,39 @@ const VoteStatusLabel = ({ status }) => {
     [PROPOSAL_VOTING_AUTHORIZED]: (
       <span style={{
         ...spanStyle,
-        color: "rgb(202, 184, 42)"
+        color: "#FFC84E"
       }}>
         {mapVoteStatusToMessage[status]}
       </span>
     )
   };
   return mapVoteStatusToLabel[status] || null;
+};
+
+const VoteStatusIcon = ({ status }) => {
+  const mapVoteStatusToIcon = {
+    [PROPOSAL_VOTING_ACTIVE]: (
+      <div style={{ width: "50px" }}>
+        <img src={require("../style/proposal-active.png")} width="60" height="60" alt="Active Proposal" />
+      </div>
+    ),
+    [PROPOSAL_VOTING_FINISHED]: (
+      <div style={{ width: "50px" }}>
+        <img src={require("../style/proposal-finished.png")} width="60" height="60" alt="Finished Proposal"/>
+      </div>
+    ),
+    [PROPOSAL_VOTING_NOT_AUTHORIZED]: (
+      <div style={{ width: "50px" }}>
+        <img src={require("../style/proposal-notauth.png")} width="60" height="60" alt="Not Authorized Proposal"/>
+      </div>
+    ),
+    [PROPOSAL_VOTING_AUTHORIZED]: (
+      <div style={{ width: "50px" }}>
+        <img src={require("../style/proposal-waiting.png")} width="60" height="60" alt="Authorized Proposal"/>
+      </div>
+    )
+  };
+  return mapVoteStatusToIcon[status] || null;
 };
 
 const getPercentage = (received, total) => Number.parseFloat((received/total)*100).toFixed(2);
@@ -75,9 +101,12 @@ class Stats extends React.Component {
       return getRandomColor();
     }
   }
-  canShowStats = (status, totalVotes) =>
-    (status === PROPOSAL_VOTING_ACTIVE || status === PROPOSAL_VOTING_FINISHED) &&
-    totalVotes > 0
+  canShowStats = (status, totalVotes) => {
+    console.log(status);
+    console.log(totalVotes);
+    console.log("------------");
+    return (status === PROPOSAL_VOTING_ACTIVE || status === PROPOSAL_VOTING_FINISHED) && totalVotes > 0;
+  }
   transformOptionsResult = (totalVotes, optionsResult = []) =>
     optionsResult
       .map(({ option, votesreceived }) => ({
@@ -98,7 +127,7 @@ class Stats extends React.Component {
       marginRight: "4px"
     };
     return (
-      <div key={`option-${option.id}`} style={optionStyle} >
+      <span key={`option-${option.id}`} style={optionStyle} >
         { option.id === "yes" ?
           (
             <Tooltip
@@ -117,14 +146,14 @@ class Stats extends React.Component {
               text="No"
               position="bottom"
             >
-              <span>
+              <span style={{ marginRight: "25px" }}>
                 <span style={optionIdStyle} >{` ✖ ${option.votesReceived}`}</span>
               </span>
             </Tooltip>
           )
         }
 
-      </div>
+      </span>
     );
   };
   getChartData = (options) =>
@@ -132,7 +161,7 @@ class Stats extends React.Component {
       label: op.id,
       value: op.percentage,
       color: op.color
-    }))
+    }));
 
   getTimeInBlocks = (endHeight, currentHeight) => {
     const blocks = endHeight - currentHeight;
@@ -166,7 +195,8 @@ class Stats extends React.Component {
     const headerStyle = {
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
+      width: "500px"
     };
     const detailStyle = {
       color: "gray"
@@ -174,33 +204,25 @@ class Stats extends React.Component {
 
     const bodyStyle = { marginTop: "10px" };
     return (
-      <div>
-        <div
-          style={headerStyle}
-        >
+      <div >
+        <div style={headerStyle}>
           <VoteStatusLabel status={status} />
-          {endHeight && currentHeight ? this.getTimeInBlocks(endHeight, currentHeight) : null}
           {showStats && <span style={{ marginLeft: "20px" }}>Votes: </span>}
+          {!isPreVoting && !showStats ?
+            (<div style={detailStyle}><p>zero votes</p></div>)
+            : null }
           {showStats && options.map(op => this.renderStats(op))}
+          {endHeight && currentHeight ? this.getTimeInBlocks(endHeight, currentHeight) : null}
+
         </div>
         {showStats ?
-          <StackedBarChart
-            displayValuesForLabel="yes"
-            style={{ ...bodyStyle, maxWidth: "500px" }}
-            data={this.getChartData(options)}
-          /> :
-          !isPreVoting ?
-            <div
-              style={bodyStyle}
-            >
-              <div
-                style={detailStyle}
-              >
-                {currentHeight && endHeight ? <p>Voting {endHeight > currentHeight ? "ends" : "ended"} at block #{endHeight}</p> : null}
-              </div>
-              This proposal has not received any votes
-            </div>
-            : null
+          <div style={bodyStyle}>
+            <StackedBarChart
+              displayValuesForLabel="yes"
+              style={{ ...bodyStyle, maxWidth: "600px" }}
+              data={this.getChartData(options)}
+            />
+          </div> : null
         }
       </div>
     );
@@ -217,15 +239,19 @@ class VoteStats extends React.Component {
     const { optionsresult, status, totalvotes, endheight } = getVoteStatus(token);
     const wrapperStyle = {
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       padding: "10px",
       border: "1px solid #bbb",
       marginTop: "10px",
       borderRadius: "8px",
-      width: "500px"
+      width: "600px"
     };
+    console.log(status);
     return(
       <div style={wrapperStyle}>
+        <VoteStatusIcon status={status} />
         <Stats status={status} optionsResult={optionsresult} totalVotes={totalvotes} endHeight={endheight} currentHeight={lastBlockHeight}/>
       </div>
     );
