@@ -53,13 +53,15 @@ class SignupFormContainer extends Component {
       ...args,
       email: (args.email || "").trim()
     };
-
     const policy = this.props.policy || {};
     validate(policy, args, this.props.isCMS);
     const { error } = this.props;
+    console.log("wtf");
+    console.log(error);
     if (error) {
       this.props.clearSubmitErrors();
     }
+    console.log("unreached");
 
     if (!this.props.isShowingSignupConfirmation && !this.props.isCMS) {
       return this.props.onSignup();

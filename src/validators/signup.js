@@ -13,15 +13,13 @@ const validate = (policy, values, isCMS) => {
       !isRequiredValidator(values.verificationtoken) ||
       !isRequiredValidator(values.username) ||
       !isRequiredValidator(values.password) ||
-      !isRequiredValidator(values.password_verify) ||
-      !isRequiredValidator(values.location) ||
-      !isRequiredValidator(values.xpublickey) ||
-      !isRequiredValidator(values.name)
+      !isRequiredValidator(values.password_verify)
     ) {
       throw new SubmissionError({ _error: "All fields are required" });
     }
 
     if (!lengthValidator(values.password, policy.minpasswordlength)) {
+      console.log("failed pass lentg");
       throw new SubmissionError({
         _error:
           "Your password must be at least " +
@@ -36,6 +34,7 @@ const validate = (policy, values, isCMS) => {
         policy.maxusernamelength
       )
     ) {
+      console.log("FAILEDL ENGTH PORRA");
       throw new SubmissionError({
         _error:
           "Your username must be at least " +
