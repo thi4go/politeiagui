@@ -285,7 +285,11 @@ export const onFetchUserInvoices = (userid, token) => dispatch => {
   dispatch(act.REQUEST_USER_INVOICES());
   return api
     .userInvoices(userid, token)
-    .then(response => dispatch(act.RECEIVE_USER_INVOICES(response)))
+    .then(response => {
+      console.log("FETCHING USER INVOICES");
+      console.log(response);
+      return dispatch(act.RECEIVE_USER_INVOICES(response));
+    })
     .catch(error => {
       dispatch(act.RECEIVE_USER_INVOICES(null, error));
     });

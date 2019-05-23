@@ -14,6 +14,7 @@ const submitInvoiceConnector = connect(
   }),
   {
     onFetchData: act.onGetPolicy,
+    onFetchUserInvoices: act.onFetchUserInvoices,
     onSave: act.onSaveNewInvoice
     //onResetInvoice: act.onResetInvoice,
   }

@@ -23,6 +23,7 @@ const getMiddlewares = () => {
   const reduxLoggerIsOn = process.env.REACT_APP_USE_REDUX_LOGGER;
   const middlewares = [
     thunkMiddleware,
+    // loggerMiddleware
     !isProductionEnv && reduxLoggerIsOn && loggerMiddleware
   ].filter(Boolean);
 

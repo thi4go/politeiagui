@@ -50,15 +50,26 @@ const InvoiceSubmit = props => {
     month,
     year,
     onFetchExchangeRate,
+    onFetchUserInvoices,
     loadingExchangeRate,
     exchangeRate,
     exchangeRateError,
     change,
     policy,
+    userInvoices,
     userCanExecuteActions,
     loggedInAsEmail,
     valid
   } = props;
+
+  if (userInvoices === undefined) {
+    onFetchUserInvoices();
+    console.log("FETCHANDO TAOKEY");
+  }
+
+  const submittedInvoicesOptions = userInvoices
+    ? userInvoices.map(i => i.input.month + "/" + i.input.year)
+    : [];
 
   const [datasheetErrors, setDatasheetErrors] = useState([]);
   const [monthOptions, setMonthOptions] = useState(MONTH_OPTIONS);
@@ -94,6 +105,8 @@ const InvoiceSubmit = props => {
     change("year", value);
   };
 
+  const handlePreloadInvoice = () => {};
+
   return (
     <div className="content" role="main">
       <div className="page submit-proposal-page">
@@ -123,6 +136,15 @@ const InvoiceSubmit = props => {
                       alignItems: "flex-end"
                     }}
                   >
+                    <Field
+                      name="submittedInvoice"
+                      component={SelectField}
+                      tabIndex={0}
+                      type="text"
+                      options={submittedInvoicesOptions}
+                      label="Pre-load Invoice Data"
+                      onChange={handlePreloadInvoice}
+                    />
                     <Field
                       name="month"
                       component={SelectField}

@@ -19,6 +19,7 @@ const newInvoiceConnector = connect(
     month: sel.invoiceFormMonth,
     year: sel.invoiceFormYear,
     exchangeRate: sel.exchangeRate,
+    userInvoices: sel.apiUserInvoices,
     loadingExchangeRate: sel.isApiRequestingExchangeRate,
     exchangeRateError: sel.apiExchangeRateError
   }),
@@ -26,7 +27,8 @@ const newInvoiceConnector = connect(
     onFetchData: act.onGetPolicy,
     onSave: act.onSaveNewInvoice,
     onResetInvoice: act.onResetInvoice,
-    onFetchExchangeRate: act.onFetchExchangeRate
+    onFetchExchangeRate: act.onFetchExchangeRate,
+    onFetchUserInvoices: act.onFetchUserInvoices
   }
 );
 
