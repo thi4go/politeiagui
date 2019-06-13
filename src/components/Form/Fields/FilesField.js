@@ -31,11 +31,23 @@ export class FilesField extends React.Component {
       : formattedFiles;
     const validation = validateFiles(inputAndNewFiles, policy);
 
+    console.log("NADA???");
+    console.log(validation);
+
     this.setState({
       policyErrors: validation.errors ? validation.errors : []
     });
 
     return dispatch(change("form/record", "files", inputAndNewFiles));
+  };
+
+  // Removes error codes from an already removed invalid file
+  onRemoveFile = idx => {
+    console.log(idx);
+    this.setState({
+      policyErrors: this.state.policyErrors.splice(idx, 1)
+    });
+    console.log(this.state.policyErrors);
   };
 
   render() {
@@ -96,7 +108,11 @@ export class FilesField extends React.Component {
           {touched && error && !disabled && (
             <span className="error">{error}</span>
           )}
-          <ProposalImages files={input.value || []} onChange={input.onChange} />
+          <ProposalImages
+            files={input.value || []}
+            onChange={input.onChange}
+            onRemoveFile={this.onRemoveFile}
+          />
         </div>
       )
     );

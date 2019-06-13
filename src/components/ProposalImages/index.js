@@ -4,13 +4,12 @@ import PropTypes from "prop-types";
 class ProposalImages extends Component {
   constructor(props) {
     super(props);
-
-    this.onRemove = this.onRemove.bind(this);
   }
 
-  onRemove(idx) {
+  onRemove = idx => {
     this.props.onChange({ remove: idx });
-  }
+    this.props.onRemoveFile(idx);
+  };
 
   getStyleForDiffMode = (removed, added) => {
     // it only returns a style modification if removed/added properties
