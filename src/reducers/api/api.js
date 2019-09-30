@@ -149,8 +149,10 @@ const api = (state = DEFAULT_STATE, action) =>
     [act.RECEIVE_PROPOSAL]: () => receive("proposal", state, action),
     [act.REQUEST_PROPOSAL_COMMENTS]: () =>
       request("proposalComments", state, action),
-    [act.RECEIVE_PROPOSAL_COMMENTS]: () =>
-      receive("proposalComments", state, action),
+    [act.RECEIVE_PROPOSAL_COMMENTS]: () => {
+      console.log("in reducer receiving prop comments");
+      return receive("proposalComments", state, action);
+    },
 
     [act.REQUEST_LIKE_COMMENT]: () => request("likeComment", state, action),
     [act.RECEIVE_LIKE_COMMENT]: () => receive("likeComment", state, action),

@@ -1081,21 +1081,22 @@ export const onFetchProposalPaywallDetails = () => dispatch => {
     });
 };
 
-export const onUpdateProposalCredits = () => dispatch => {
-  dispatch(act.REQUEST_UPDATE_PROPOSAL_CREDITS());
+// export const onUpdateProposalCredits = () => dispatch => {
+//   dispatch(act.REQUEST_UPDATE_PROPOSAL_CREDITS());
+//   console.log("ON ACTION UPDATING PROPOSAL CREDITS")
+//   console.log("ON ACTION UPDATING PROPOSAL CREDITS")
+//   const dispatchAfterWaitFn = callAfterMinimumWait(response => {
+//     dispatch(act.RECEIVE_UPDATE_PROPOSAL_CREDITS(response));
+//     dispatch(act.SET_PROPOSAL_CREDITS(response.proposalcredits));
+//   }, 500);
 
-  const dispatchAfterWaitFn = callAfterMinimumWait(response => {
-    dispatch(act.RECEIVE_UPDATE_PROPOSAL_CREDITS(response));
-    dispatch(act.SET_PROPOSAL_CREDITS(response.proposalcredits));
-  }, 500);
-
-  return api
-    .me()
-    .then(dispatchAfterWaitFn)
-    .catch(error => {
-      dispatch(act.RECEIVE_UPDATE_PROPOSAL_CREDITS(null, error));
-    });
-};
+//   return api
+//     .me()
+//     .then(dispatchAfterWaitFn)
+//     .catch(error => {
+//       dispatch(act.RECEIVE_UPDATE_PROPOSAL_CREDITS(null, error));
+//     });
+// };
 
 export const onAddProposalCredits = ({ amount, txNotBefore }) => (
   dispatch,
@@ -1124,8 +1125,9 @@ export const onAddProposalCredits = ({ amount, txNotBefore }) => (
 
 export const onUserProposalCredits = () => dispatch => {
   dispatch(act.REQUEST_USER_PROPOSAL_CREDITS());
-
+  console.log("ON ACTION ONUSERPROPOSALCREDITS");
   const dispatchAfterWaitFn = callAfterMinimumWait(response => {
+    console.log("CALLING AFTER WAIT RECEIVING CREDITS");
     dispatch(act.RECEIVE_USER_PROPOSAL_CREDITS(response));
     dispatch(
       act.SET_PROPOSAL_CREDITS(
@@ -1298,6 +1300,7 @@ export const onFetchProposalPaywallPayment = () => dispatch => {
 
 export const onRescanUserPayments = userid =>
   withCsrf((dispatch, _, csrf) => {
+    console.log("ON ACTION ONRESCANUSERPAYMENTS");
     dispatch(act.REQUEST_RESCAN_USER_PAYMENTS(userid));
     return api
       .rescanUserPayments(csrf, userid)

@@ -15,6 +15,8 @@ const comments = (state = DEFAULT_STATE, action) =>
     ? () => state
     : ({
         [act.RECEIVE_PROPOSAL_COMMENTS]: () => {
+          console.log("in reducer normalized receiving prop comments");
+
           const { token, comments, accesstime } = action.payload;
           return compose(
             set(["comments", "byToken", token], comments),

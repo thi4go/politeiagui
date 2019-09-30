@@ -1,9 +1,9 @@
 import * as act from "src/actions/types";
-import cloneDeep from "lodash/cloneDeep";
-import unionBy from "lodash/unionBy";
-import compose from "lodash/fp/compose";
-import set from "lodash/fp/set";
-import update from "lodash/fp/update";
+// import cloneDeep from "lodash/cloneDeep";
+// import unionBy from "lodash/unionBy";
+// import compose from "lodash/fp/compose";
+// import set from "lodash/fp/set";
+// import update from "lodash/fp/update";
 
 const DEFAULT_STATE = {
   proposalCredits: 0
