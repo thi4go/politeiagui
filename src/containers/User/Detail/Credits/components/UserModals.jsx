@@ -25,6 +25,7 @@ export default ({
 
   const onStartPollingPayment = () => {
     toggleCreditsPaymentPolling(true);
+    toggleProposalPaymentReceived(false);
     onPollProposalPaywallPayment(false);
   };
 

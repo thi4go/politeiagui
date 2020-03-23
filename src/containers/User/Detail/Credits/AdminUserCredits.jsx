@@ -57,12 +57,14 @@ const Credits = ({ user }) => {
   useEffect(() => {
     if (shouldPollPaywallPayment) {
       toggleCreditsPaymentPolling(true);
+      toggleProposalPaymentReceived(false);
       onPollProposalPaywallPayment(true);
     }
   }, [
     shouldPollPaywallPayment,
     onPollProposalPaywallPayment,
-    toggleCreditsPaymentPolling
+    toggleCreditsPaymentPolling,
+    toggleProposalPaymentReceived
   ]);
 
   useEffect(() => {
@@ -72,7 +74,6 @@ const Credits = ({ user }) => {
     }
   }, [
     proposalPaymentReceived,
-    toggleProposalPaymentReceived,
     closeProposalCreditsModal,
     toggleCreditsPaymentPolling
   ]);

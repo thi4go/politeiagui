@@ -17,8 +17,8 @@ const Credits = ({ user }) => {
     isApiRequestingUserProposalCredits,
     proposalCredits,
     toggleCreditsPaymentPolling,
-    proposalPaymentReceived,
     toggleProposalPaymentReceived,
+    proposalPaymentReceived,
     onPollProposalPaywallPayment,
     shouldPollPaywallPayment
   } = useCredits(userID);
@@ -37,12 +37,14 @@ const Credits = ({ user }) => {
   useEffect(() => {
     if (shouldPollPaywallPayment) {
       toggleCreditsPaymentPolling(true);
+      toggleProposalPaymentReceived(false);
       onPollProposalPaywallPayment(true);
     }
   }, [
     shouldPollPaywallPayment,
     onPollProposalPaywallPayment,
-    toggleCreditsPaymentPolling
+    toggleCreditsPaymentPolling,
+    toggleProposalPaymentReceived
   ]);
 
   useEffect(() => {
@@ -52,7 +54,6 @@ const Credits = ({ user }) => {
     }
   }, [
     proposalPaymentReceived,
-    toggleProposalPaymentReceived,
     closeProposalCreditsModal,
     toggleCreditsPaymentPolling
   ]);
@@ -86,6 +87,7 @@ const Credits = ({ user }) => {
         proposalCreditPrice={proposalCreditPrice}
       />
       <UserModals
+        user={user}
         showPaywallModal={showPaywallModal}
         closePaywallModal={closePaywallModal}
         showProposalCreditsModal={showProposalCreditsModal}
