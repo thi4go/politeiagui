@@ -64,7 +64,6 @@ export function useCredits(userID) {
   const proposalPaymentReceived = useSelector(sel.proposalPaymentReceived);
   const isAdmin = useSelector(sel.currentUserIsAdmin);
   const currentUserID = useSelector(sel.currentUserID);
-  const user = useSelector(sel.currentUser);
 
   const onUserProposalCredits = useAction(act.onUserProposalCredits);
   const onPurchaseProposalCredits = useAction(
@@ -88,7 +87,7 @@ export function useCredits(userID) {
   const { isPaid } = usePaywall();
   const proposalCredits = proposalCreditsUnspent.length;
   const proposalCreditsFetched = proposalCredits !== null;
-  const isUserPageOwner = user && currentUserID === user.userid;
+  const isUserPageOwner = currentUserID === userID;
   const shouldFetchPurchaseProposalCredits =
     isPaid &&
     !!userID &&
@@ -141,7 +140,6 @@ export function useCredits(userID) {
   return {
     proposalCreditPrice,
     isAdmin,
-    user,
     isApiRequestingUserProposalCredits,
     proposalCredits,
     proposalCreditsPurchases,
