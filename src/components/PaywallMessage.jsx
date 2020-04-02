@@ -14,12 +14,11 @@ const PaywallMessage = ({ wrapper, ...props }) => {
   };
   const closePaywallModal = () => setShowModal(false);
   const { paywallContent } = useConfig();
-  const { userPaywallStatus, paywallAmount } = usePaywall();
-  const showMessage = userPaywallStatus < 2 && paywallAmount > 0;
+  const { isPaid } = usePaywall();
   const WrapperComponent = wrapper;
 
   return (
-    showMessage && (
+    !isPaid && (
       <>
         <WrapperComponent {...props}>
           <StaticMarkdown contentName={paywallContent} />
