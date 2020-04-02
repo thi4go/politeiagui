@@ -2,8 +2,8 @@ import { useSelector } from "src/redux";
 import * as sel from "src/selectors";
 
 export const useUserOnboard = () => {
-  const loginResponse = useSelector(sel.apiLoginResponse);
+  const currentUser = useSelector(sel.currentUser);
   return {
-    firstUserAccess: !!loginResponse && !loginResponse.lastlogintime
+    firstUserAccess: !!currentUser && !currentUser.lastlogintime
   };
 };
