@@ -11,7 +11,7 @@ import CreditHistorySection from "./components/CreditHistorySection.jsx";
 
 const Credits = ({ user }) => {
   const userID = user && user.userid;
-  const { isPaid } = usePaywall();
+  const { isPaid } = usePaywall(userID);
   const {
     proposalCreditPrice,
     isApiRequestingUserProposalCredits,
