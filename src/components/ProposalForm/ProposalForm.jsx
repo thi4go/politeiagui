@@ -285,6 +285,7 @@ const ProposalFormWrapper = ({
             );
           }
         }
+        // XXX on edit we should pass propsoal _state_ here
         const proposalToken = await onSubmit({
           ...others,
           type,
